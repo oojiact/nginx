@@ -1,0 +1,30 @@
+S: Ubuntu 14.04 LTS, Apache 2.4.7, OpenSSL 1.0.1f
+SSL Labs: A+ (RSA2048, SHA256 certificate)
+Certificate: 100%
+Protocol Support: 95%
+Key Exchange: 90%
+Cipher Strength: 90% 
+
+#### In the SSL.CONF file
+SSLCipherSuite AES256+EECDH:AES256+EDH:AES128+EECDH:AES128+EDH
+
+SSLProtocol -ALL -SSLv3 +TLSv1 +TLSv1.1 +TLSv1.2
+
+SSLHonorCipherOrder on
+SSLStrictSNIVHostCheck Off
+SSLCompression off
+
+SSLStaplingCache shmcb:/tmp/stapling_cache(128000)
+
+SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+
+### In the <virtualhost> section of file default-ssl.conf
+SSLUseStapling on
+SSLStaplingResponderTimeout 5
+SSLStaplingReturnResponderErrors off
+
+### headers_module must be enabled for these extra security settings
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+Header set Public-Key-Pins "pin-sha256=\"<Subject Public Key Information (SPKI)>\"; max-age=2592000; includeSubDomains"
+Header always set X-Frame-Options SAMEORIGIN
