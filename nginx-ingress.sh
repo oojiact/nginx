@@ -11,8 +11,8 @@ helm init
 kubectl get deployments -n kube-system
 kubectl run hello-app --image=gcr.io/google-samples/hello-app:1.0 --port=8080
 kubectl expose deployment hello-app
-helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
 sleep 30
+helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
 kubectl get service nginx-ingress-controller
 cat <<EOF > ingress-resource.yaml
 apiVersion: extensions/v1beta1
