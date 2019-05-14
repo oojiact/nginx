@@ -1,0 +1,48 @@
+nginx.ingress.kubernetes.io/server-snippet: |
+      server_name chatbot01-integration-v1-service.c1-alpha-tiscogroup.com ;
+
+               listen 80;
+
+               set $proxy_upstream_name "-";
+
+               location /admin {
+
+                       set $namespace      "service";
+                       set $ingress_name   "chatbot01-integration-v1-service-97";
+                       set $service_name   "chatbot01-integration-v1-service-97";
+                       set $service_port   "80";
+                       set $location_path  "/admin";
+
+                       rewrite_by_lua_block {
+                               balancer.rewrite()
+                       }
+
+                       header_filter_by_lua_block {
+
+                       }
+                       body_filter_by_lua_block {
+
+                       }
+
+                       log_by_lua_block {
+
+                               balancer.log()
+
+                               monitor.call()
+
+                       }
+
+                       port_in_redirect off;
+
+                       set $proxy_upstream_name    "service-chatbot01-integration-v1-service-97-80";
+                       set $proxy_host             $proxy_upstream_name;
+
+                       client_max_body_size                    1m;
+
+                       proxy_set_header Host                   $best_http_host;
+                       proxy_http_version 1.1;
+                       proxy_set_header Upgrade $http_upgrade;
+                       proxy_set_header Connection "Upgrade";
+                       proxy-read-timeout  3600s;
+                       proxy-send-timeout  3600s;
+                       }
